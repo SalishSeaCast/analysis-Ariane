@@ -1,0 +1,115 @@
+&ARIANE
+    key_alltracers =.TRUE.,
+    key_sequential =.TRUE.,
+    key_ascii_outputs =.TRUE.,
+    mode ='quantitative',
+    forback ='forward',
+    bin ='nobin',
+    init_final ='init',
+    nmax =30000,
+    tunit =3600.,
+    ntfic =1,
+    key_computesigma=.TRUE.,
+    zsigma=100.,
+/
+
+&SEQUENTIAL
+    maxcycles = 1,
+/
+
+&OPAPARAM
+    imt =398,
+    jmt =898,
+    kmt =40,
+    lmt =360,
+    key_periodic =.FALSE.,
+    key_jfold =.FALSE.,
+    key_computew =.FALSE.,
+    key_partialsteps =.TRUE.,
+/
+
+&QUANTITATIVE
+  key_eco        = .FALSE.,
+  key_reducmem   = .TRUE.,
+  key_unitm3     = .TRUE.,
+  key_nointerpolstats = .FALSE.,
+  max_transport  = 1.e9,
+  lmin = 1,
+  lmax = 24,
+/
+
+
+&ZONALCRT
+    c_dir_zo ='Links',
+    c_prefix_zo ='SalishSea_1h_',
+    ind0_zo =01,
+    indn_zo =15,
+    maxsize_zo =2,
+    c_suffix_zo ='_grid_U.nc',
+    nc_var_zo ='vozocrtx',
+    nc_var_eivu ='NONE',
+    nc_att_mask_zo ='NONE',
+/
+
+&MERIDCRT
+    c_dir_me ='Links',
+    c_prefix_me ='SalishSea_1h_'
+    ind0_me =01,
+    indn_me =15,
+    maxsize_me =2,
+    c_suffix_me ='_grid_V.nc',
+    nc_var_me ='vomecrty',
+    nc_var_eivv ='NONE',
+    nc_att_mask_me ='NONE',
+/
+
+&VERTICRT
+  c_dir_ve     = 'Links',
+  c_prefix_ve  = 'SalishSea_1h_',
+  ind0_ve      = 01,
+  indn_ve      = 15,
+  maxsize_ve   = 2,
+  c_suffix_ve  = '_grid_W.nc',
+  nc_var_ve    = 'vovecrtz',
+  nc_var_eivw  = 'NONE',
+  nc_att_mask_ve = 'NONE',
+/
+
+&TEMPERAT
+  c_dir_te     = 'Links',
+  c_prefix_te  = 'SalishSea_1h_',
+  ind0_te      = 01,
+  indn_te      = 15,
+  maxsize_te   = 2,
+  c_suffix_te  = '_grid_T.nc',
+  nc_var_te    = 'votemper',
+  nc_att_mask_te = 'NONE',
+/
+
+&SALINITY
+  c_dir_sa     = 'Links',
+  c_prefix_sa  = 'SalishSea_1h_',
+  ind0_sa      = 01,
+  indn_sa      = 15,
+  maxsize_sa   = 2,
+  c_suffix_sa  = '_grid_T.nc',
+  nc_var_sa    = 'vosaline',
+  nc_att_mask_sa = 'NONE',
+/
+
+&MESH
+    dir_mesh ='/data/nsoontie/MEOPAR/NEMO-forcing/grid/',
+    fn_mesh ='mesh_mask_SalishSea2.nc',
+    nc_var_xx_tt ='glamt',
+    nc_var_xx_uu ='glamu',
+    nc_var_yy_tt ='gphit',
+    nc_var_yy_vv ='gphiv',
+    nc_var_zz_ww ='gdepw',
+    nc_var_e2u ='e2u',
+    nc_var_e1v ='e1v',
+    nc_var_e1t ='e1t',
+    nc_var_e2t ='e2t',
+    nc_var_e3t ='e3t',
+    nc_var_tmask ='tmask',
+    nc_mask_val =0.,
+/
