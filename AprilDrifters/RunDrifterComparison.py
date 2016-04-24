@@ -155,6 +155,7 @@ def main(args):
 
     drifter = get_drifter(drifterid)
     indexes = find_indexes(firstindex, drifter, runlength)
+    # use a bathymetry file to get a grid of lat and lons, depth is not used
     grid = nc.Dataset('../../nemo-forcing/grid/bathy_meter_SalishSea2.nc')
     for index in indexes:
         write_initial_positions(index, drifter, grid)
