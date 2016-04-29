@@ -35,7 +35,7 @@
 /
 
 &ZONALCRT
-        c_dir_zo ='../Links'
+        c_dir_zo ='Links/'
         c_prefix_zo ='SalishSea_1h_',
         ind0_zo =01,
         indn_zo =05,
@@ -47,7 +47,7 @@
 /
 
 &MERIDCRT
-        c_dir_me ='../Links',
+        c_dir_me ='Links/',
         c_prefix_me ='SalishSea_1h_',
         ind0_me =01,
         indn_me =05,
