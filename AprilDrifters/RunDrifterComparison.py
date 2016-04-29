@@ -62,6 +62,8 @@ def convert_time(matlab_datenum):
     python_datetime = (datetime.datetime.fromordinal(int(matlab_datenum))
                        + datetime.timedelta(days=matlab_datenum%1)
                        - datetime.timedelta(days = 366))
+    # there is a bizarre one hour error that I don't know the origin of
+    python_datetime = python_datetime - datetime.timedelta(hours=1)
     return python_datetime
 
 
@@ -93,13 +95,13 @@ def write_initial_positions(index, drifter, grid):
     initial_conditions = np.ones((81, 5))
     # longitude index
     initial_conditions[0:-1:3, 0] = yp
-    initial_conditions[1:-1:3, 0] = yp - 0.5
-    initial_conditions[2:81:3, 0] = yp + 0.5
+    initial_conditions[1:-1:3, 0] = yp - 2.5
+    initial_conditions[2:81:3, 0] = yp + 2.5
     # latitude index
     for i in range(0, 81, 9):
         initial_conditions[0+i:3+i, 1] = xp + 0.5
-        initial_conditions[0+3+i:3+3+i, 1] = xp
-        initial_conditions[0+6+i:3+6+i, 1] = xp + 1
+        initial_conditions[0+3+i:3+3+i, 1] = xp - 2
+        initial_conditions[0+6+i:3+6+i, 1] = xp + 3
     # depth
     initial_conditions[0:27, 2] = -1.5
     initial_conditions[27:54, 2] = -2.5
@@ -110,8 +112,8 @@ def write_initial_positions(index, drifter, grid):
           + drifter['time'][index].second/3600.)
     for i in range(0, 81, 27):
         initial_conditions[0+i:9+i, 3] = tp
-        initial_conditions[0+9+i:9+9+i, 3] = tp + 0.25
-        initial_conditions[0+18+i:9+18+i, 3] = tp - 0.25
+        initial_conditions[0+9+i:9+9+i, 3] = tp + 0.5
+        initial_conditions[0+18+i:9+18+i, 3] = tp - 0.5
 
     np.savetxt('initial_positions.txt', initial_conditions, fmt='%10.5f')
 
