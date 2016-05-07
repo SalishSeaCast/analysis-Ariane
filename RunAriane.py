@@ -34,12 +34,15 @@ def run_ariane():
                 universal_newlines=True)
 
 
-def rename_results(rundate):
+def rename_results(rundate=arrow.today, nday=nday, labeltype='date'):
     tempdir = 'TempStatsFiles/'
     finaldir = 'StatsFiles'
     for filename in os.listdir(tempdir):
-        newname = (filename.split('.')[0] + '.' +
+        if labeltype == 'date':
+            newname = (filename.split('.')[0] + '.' +
                    SUBDIR_TMPL.format(rundate.datetime).lower())
+        else
+            newname = (filename.split('.')[0] + '.' + str(nday)
         os.rename(os.path.join(tempdir, filename),
                   os.path.join(finaldir, newname))
 
@@ -56,7 +59,7 @@ def main(args):
         make_links(startfile, args.runlength)
         print ('Startfile', startfile)
         run_ariane()
-        rename_results(rundate)
+        rename_results(rundate=rundate)
         print ('End', rundate)
 
 
