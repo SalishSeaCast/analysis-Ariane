@@ -34,8 +34,8 @@
   key_unitm3     = .TRUE.,
   key_nointerpolstats = .FALSE.,
   max_transport  = 1.e9,
-  lmin= -10,
-  lmax= 15,
+  lmin = 1,
+  lmax = 24,
 /
 
 
