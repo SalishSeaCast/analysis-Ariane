@@ -34,15 +34,15 @@ def run_ariane():
                 universal_newlines=True)
 
 
-def rename_results(rundate=arrow.today, nday=nday, labeltype='date'):
+def rename_results(rundate=arrow.utcnow(), nday=1, labeltype='date'):
     tempdir = 'TempStatsFiles/'
     finaldir = 'StatsFiles'
     for filename in os.listdir(tempdir):
         if labeltype == 'date':
             newname = (filename.split('.')[0] + '.' +
-                   SUBDIR_TMPL.format(rundate.datetime).lower())
-        else
-            newname = (filename.split('.')[0] + '.' + str(nday)
+                       SUBDIR_TMPL.format(rundate.datetime).lower())
+        else:
+            newname = filename.split('.')[0] + '.day' + str(nday)
         os.rename(os.path.join(tempdir, filename),
                   os.path.join(finaldir, newname))
 
