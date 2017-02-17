@@ -24,17 +24,19 @@ def _make_namelist(minvalue, maxvalue, dir_name):
 
 def main(args):
     dir_name = './'
-    for nday in range(args.numberofdays):
-        print ('Start', nday+1)
-        _make_namelist(nday+1, nday+2, dir_name)
+    for nday in range(args.startday, args.startday + args.numberofdays):
+        print ('Start', nday)
+        _make_namelist(nday, nday, dir_name)
         RunAriane.run_ariane()
         RunAriane.rename_results(nday=nday, labeltype='day')
-        print ('End', nday+1)
+        print ('End', nday)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'numberofdays', help='Number of different dates to do', type=int)
+    parser.add_argument(
+        'startday', help='Which day to start with', type=int)
     args = parser.parse_args()
     main(args)
