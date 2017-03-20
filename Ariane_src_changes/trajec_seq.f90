@@ -182,6 +182,7 @@ SUBROUTINE trajec_seq()
        tfin    =    0._rprec  , & !
        trtot1  =    0._rprec  , & !
        prof    =    0._rprec  , & !
+       tol     =    1e-3, & !
        x0   , & !
        y0   , & !
        z0   , & !
@@ -1096,19 +1097,19 @@ SUBROUTINE trajec_seq()
         DO n = 1, ntraj
            IF (igo(n) == 1) then
               IF (age(n) - dtime(n) > 10) then  ! we are moving just slowly
-                 write (lun_standard, *) 'Slow mo'
+                 write (lun_standard, *) 'Slow mo', n
                  dtime(n) = age(n)
               ELSE
-                 ii = int(gi(n))
-                 jj = int(gj(n))
-                 kk = -int(gk(n))
+                 ii = int(gi(n) + tol)
+                 jj = int(gj(n) + tol)
+                 kk = -int(gk(n) + tol)
                  IF (uu(ii, jj, kk, 1)*uu(ii, jj+1, kk, 1) < 0. .AND. &
                      vv(ii, jj, kk, 1)*vv(ii+1, jj, kk, 1) < 0.) THEN
-                    write (lun_standard, *) 'Horizontal Eddy'
+                    write (lun_standard, *) 'Horizontal Eddy', n
                     gi(n) = gi(n) + 10 * 0.5 * (uu(ii, jj, kk, 1) + uu(ii, jj+1, kk, 1)) / tfac(n)
                     gj(n) = gj(n) + 10 * 0.5 * (vv(ii, jj, kk, 1) + vv(ii+1, jj, kk, 1)) / tfac(n)
-                    w(n) = ww(ii, jj, kk,1)   - &
-                         (gk(n) + REAL(k0(n), kind=rprec))   * (ww(is, js, ks+1, 1) - ww(is, js, ks, 1))
+                    w(n) = ww(ii, jj, kk, 1)   - &
+                         (gk(n) + REAL(k0(n), kind=rprec))   * (ww(ii, jj, kk+1, 1) - ww(ii, jj, kk, 1))
                     gk(n) = gk(n) - 10 * w(n) / tfac(n)
                     age(n) = age(n) + 10
                     IF (gi(n) > int(gi(n))) then
@@ -1121,8 +1122,54 @@ SUBROUTINE trajec_seq()
                     ELSE
                        j0(n) = int(gj(n))
                     ENDIF
+                 ELSEIF (uu(ii, jj, kk, 1)*uu(ii, jj, kk+1, 1) < 0. .AND. &
+                      ww(ii, jj, kk, 1)*ww(ii+1, jj, kk, 1) < 0.) THEN
+                    write (lun_standard, *) 'Vertical Eddy, NS axis', n
+                    write (lun_standard, *) gi(n), gj(n), gk(n), kk
+                    write (lun_standard, *) uu(ii, jj, kk, 1), uu(ii, jj, kk+1, 1), &
+                         ww(ii, jj, kk, 1), ww(ii+1, jj, kk, 1)
+                    gi(n) = gi(n) + 10 * 0.5 * (uu(ii, jj, kk, 1) + uu(ii, jj+1, kk, 1)) / tfac(n)
+                    gk(n) = gk(n) - 10 * 0.5 * (ww(ii, jj, kk, 1) + ww(ii, jj, kk+1, 1)) / tfac(n)
+                    v(n) = vv(ii, jj-1, kk, 1) + &
+                         (gj(n) - REAL(j0(n)-1, kind=rprec)) * (vv(ii, jj, kk, 1) - vv(ii, jj-1, kk, 1))
+                    gj(n) = gj(n) + 10 * v(n) / tfac(n)
+                    age(n) = age(n) + 10
+                    IF (gi(n) > int(gi(n))) then
+                       i0(n) = int(gi(n)) + 1
+                    ELSE
+                       i0(n) = int(gi(n))
+                    ENDIF
+                    IF (gk(n) > int(gk(n))) then
+                       k0(n) = - int(gk(n)) - 1
+                    ELSE
+                       k0(n) = - int(gk(n))
+                    ENDIF
+                    stop
+                 ELSEIF (vv(ii, jj, kk, 1)*vv(ii, jj, kk+1, 1) < 0. .AND. &
+                      ww(ii, jj, kk, 1)*ww(ii, jj+1, kk, 1) < 0.) THEN
+                    write (lun_standard, *) 'Vertical Eddy, EW axis', n
+                    write (lun_standard, *) gi(n), gj(n), gk(n), kk
+                    write (lun_standard, *) vv(ii, jj, kk, 1), vv(ii, jj, kk+1, 1), &
+                         ww(ii, jj, kk, 1), ww(ii, jj+1, kk, 1)
+                    gj(n) = gj(n) + 10 * 0.5 * (vv(ii, jj, kk, 1) + vv(ii, jj+1, kk, 1)) / tfac(n)
+                    gk(n) = gk(n) - 10 * 0.5 * (ww(ii, jj, kk, 1) + ww(ii, jj, kk+1, 1)) / tfac(n)
+                    u(n) = uu(ii-1, jj, kk, 1) + &
+                         (gi(n) - REAL(i0(n)-1, kind=rprec)) * (uu(ii, jj, kk, 1) - uu(ii, jj-1, kk, 1))
+                    gi(n) = gi(n) + 10 * u(n) / tfac(n)
+                    age(n) = age(n) + 10
+                    IF (gj(n) > int(gj(n))) then
+                       j0(n) = int(gj(n)) + 1
+                    ELSE
+                       j0(n) = int(gj(n))
+                    ENDIF
+                    IF (gk(n) > int(gk(n))) then
+                       k0(n) = - int(gk(n)) - 1
+                    ELSE
+                       k0(n) = - int(gk(n))
+                    ENDIF
+                    stop
                  ELSE
-                    write (lun_standard, *) 'Vertical Eddy'
+                    write (lun_standard, *) 'Eddy Problem', n
                     stop
                  ENDIF
               ENDIF
